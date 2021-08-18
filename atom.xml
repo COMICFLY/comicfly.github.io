@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://comicfly.github.io</id>
     <title>COMICFLY资源站</title>
-    <updated>2021-08-18T13:16:50.248Z</updated>
+    <updated>2021-08-18T13:57:16.211Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://comicfly.github.io"/>
     <link rel="self" href="https://comicfly.github.io/atom.xml"/>
@@ -10,6 +10,27 @@
     <logo>https://comicfly.github.io/images/avatar.png</logo>
     <icon>https://comicfly.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, COMICFLY资源站</rights>
+    <entry>
+        <title type="html"><![CDATA[Microsoft Windows 11 官方原版镜像]]></title>
+        <id>https://comicfly.github.io/post/microsoft-windows-11-guan-fang-yuan-ban-jing-xiang/</id>
+        <link href="https://comicfly.github.io/post/microsoft-windows-11-guan-fang-yuan-ban-jing-xiang/">
+        </link>
+        <updated>2021-08-18T13:17:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>概要<br>
+厂商 微软<br>
+类别 操作系统 - Windows<br>
+发行时间 2021-06-24<br>
+最近更新 2021-06-29<br>
+最新版本 Dev</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>概要<br>
+厂商 微软<br>
+类别 操作系统 - Windows<br>
+发行时间 2021-06-24<br>
+最近更新 2021-06-29<br>
+最新版本 Dev</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[ Microsoft Windows 10 官方原版镜像]]></title>
         <id>https://comicfly.github.io/post/microsoft-windows-10-guan-fang-yuan-ban-jing-xiang/</id>
