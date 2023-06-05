@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>倒计时网页</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+      font-size: 40px;
+      color: #fff;
+      background-color: #000;
+    }
+  </style>
+  <script>
+    // 目标日期，格式为YYYY-MM-DD
+    var targetDate = '2023-06-20';
+
+    // 计算剩余天数、小时数、分钟数和秒数
+    function calculateTimeRemaining() {
+      var now = new Date();
+      var target = new Date(targetDate);
+      var timeRemaining = target - now;
+
+      var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+      return {
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+      };
+    }
+
+    // 更新倒计时显示
+    function updateCountdown() {
+      var time = calculateTimeRemaining();
+      document.getElementById('countdown').innerHTML = time.days + ' 天 ' + time.hours + ' 小时 ' + time.minutes + ' 分钟 ' + time.seconds + ' 秒';
+    }
+
+    // 每秒更新一次倒计时显示
+    setInterval(updateCountdown, 1000);
+  </script>
+</head>
+<body>
+  <h1>距离期末考试还有：</h1>
+  <div id="countdown"></div>
+</body>
+</html>
