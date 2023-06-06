@@ -44,10 +44,23 @@
 
     // 每秒更新一次倒计时显示
     setInterval(updateCountdown, 1000);
+
+    // 播放音乐
+    var audio = new Audio('music.mp3'); // 替换为您的音乐文件路径
+    function playMusic() {
+      audio.play();
+    }
+
+    // 暂停音乐
+    function pauseMusic() {
+      audio.pause();
+    }
   </script>
 </head>
 <body>
   <h1>距离期末考试还有：</h1>
   <div id="countdown"></div>
+  <button onclick="playMusic()">播放音乐</button>
+  <button onclick="pauseMusic()">暂停音乐</button>
 </body>
 </html>
