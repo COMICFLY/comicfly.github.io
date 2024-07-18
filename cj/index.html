@@ -90,7 +90,7 @@ document.getElementById('scoreForm').addEventListener('submit', function(e) {
     const birthTime = document.getElementById('birthTime').value;
 
     // 发起网络请求，获取成绩信息
-    fetch(`http://api.jyzhjy.cn/api/auth/score/byId?name=${encodeURIComponent(name)}&studentId=${studentId}&birthTime=${birthTime}`)
+    fetch(`https://api.jyzhjy.cn/api/auth/score/byId?name=${encodeURIComponent(name)}&studentId=${studentId}&birthTime=${birthTime}`)
         .then(response => {
             // 解析服务器响应的JSON数据
             return response.json();
