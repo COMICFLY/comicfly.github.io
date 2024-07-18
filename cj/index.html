@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成绩查询</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #444;
+            color: #fff;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+        #result {
+            margin-top: 20px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            width: 90%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>成绩查询</h1>
+    <form id="scoreForm">
+        <label for="name">学生名字:</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="studentId">准考证号:</label>
+        <input type="text" id="studentId" name="studentId" required>
+        
+        <label for="birthTime">生日(6位数，年月日):</label>
+        <input type="text" id="birthTime" name="birthTime" required>
+        
+        <input type="submit" value="查询">
+    </form>
+    
+    <div id="result" style="display:none;">
+        <h2>查询结果</h2>
+        <p id="score"></p>
+        <p id="timestamp"></p>
+    </div>
+
+    <script>
+// 获取表单元素，监听提交事件
+document.getElementById('scoreForm').addEventListener('submit', function(e) {
+    // 阻止表单的默认提交行为，避免页面刷新
+    e.preventDefault();
+    
+    // 从表单中获取输入的值
+    const name = document.getElementById('name').value;
+    const studentId = document.getElementById('studentId').value;
+    const birthTime = document.getElementById('birthTime').value;
+
+    // 发起网络请求，获取成绩信息
+    fetch(`http://api.jyzhjy.cn/api/auth/score/byId?name=${encodeURIComponent(name)}&studentId=${studentId}&birthTime=${birthTime}`)
+        .then(response => {
+            // 解析服务器响应的JSON数据
+            return response.json();
+        })
+        .then(data => {
+            // 直接使用data中的msg字段作为结果展示
+            // 注意：这里假设服务器返回的data.msg总是包含了可以展示给用户的信息
+            document.getElementById('score').innerText = `成绩: ${data.msg}`;
+            // 同时展示查询的时间戳
+            document.getElementById('timestamp').innerText = `查询时间: ${data.timestamp}`;
+            // 显示查询结果区域
+            document.getElementById('result').style.display = 'block';
+        })
+        .catch(() => {
+            // 如果在请求过程中发生错误（如网络问题），则显示默认的失败信息
+            document.getElementById('score').innerText = '成绩: 查询失败，请稍后再试。';
+            // 显示当前时间作为查询时间
+            document.getElementById('timestamp').innerText = `查询时间: ${new Date().toLocaleString()}`;
+            // 确保查询结果区域可见，即使查询失败
+            document.getElementById('result').style.display = 'block';
+        });
+});
+    </script>
+</body>
+</html>
