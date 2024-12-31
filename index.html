@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>烟花发射和绽放效果</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+        #fireworkCanvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="fireworkCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('fireworkCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // 绘制说明文字
+        function drawHeader() {
+            const headerText = "距离";
+            const yearText = "2025";
+            const remainingText = "年还有";
+
+            ctx.save();
+            ctx.globalAlpha = 0.4; // 设置说明文字透明度
+            ctx.font = '40px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // 计算整体文字宽度
+            const headerWidth = ctx.measureText(headerText).width;
+            const yearWidth = ctx.measureText(yearText).width;
+            const remainingWidth = ctx.measureText(remainingText).width;
+            const totalWidth = headerWidth + yearWidth + remainingWidth + 20; // 加间距
+
+            // 起始位置
+            const startX = canvas.width / 2 - totalWidth / 2;
+
+            // 绘制“距离”
+            ctx.fillStyle = 'white';
+            ctx.fillText(headerText, startX + headerWidth / 2, canvas.height / 2 - 50);
+
+            // 绘制“2025”（红色）
+            ctx.fillStyle = 'red';
+            ctx.fillText(yearText, startX + headerWidth + yearWidth / 2 + 10, canvas.height / 2 - 50);
+
+            // 绘制“年还有”
+            ctx.fillStyle = 'white';
+            ctx.fillText(
+                remainingText,
+                startX + headerWidth + yearWidth + remainingWidth / 2 + 20,
+                canvas.height / 2 - 50
+            );
+
+            ctx.restore();
+        }
+
+        // 倒计时逻辑
+        function drawCountdown() {
+            const targetDate = new Date('2025-01-01T00:00:00+08:00'); // UTC+8 时间
+            const now = new Date();
+            const diff = targetDate - now;
+
+            let text;
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+                text = `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`;
+            } else {
+                text = "新年快乐！";
+            }
+
+            ctx.save();
+            ctx.globalAlpha = 0.2; // 设置倒计时文字透明度
+            ctx.font = '40px Arial';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            ctx.restore();
+        }
+
+        // 烟花粒子类
+        class Particle {
+            constructor(x, y, color, size, speedX, speedY) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = size;
+                this.speedX = speedX || (Math.random() - 0.5) * 6;
+                this.speedY = speedY || (Math.random() - 0.5) * 6;
+                this.gravity = 0.05;
+                this.alpha = 1;
+                this.friction = 0.98;
+            }
+
+            update() {
+                this.speedX *= this.friction;
+                this.speedY *= this.friction;
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.alpha -= 0.02;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // 烟花类
+        class Firework {
+            constructor(x, targetY) {
+                this.x = x;
+                this.y = canvas.height;
+                this.targetY = Math.max(targetY, 50);
+                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                this.speedY = -Math.min((canvas.height - this.targetY) / 20, 12);
+                this.acceleration = 0.15;
+                this.exploded = false;
+                this.particles = [];
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y += this.speedY;
+                    this.speedY += this.acceleration;
+                    if (this.speedY >= 0) this.explode();
+                } else {
+                    this.particles = this.particles.filter(p => p.alpha > 0);
+                    this.particles.forEach(p => p.update());
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.restore();
+                } else {
+                    this.particles.forEach(p => p.draw());
+                }
+            }
+
+            explode() {
+                this.exploded = true;
+                for (let i = 0; i < 80; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 4 + 2;
+                    const size = Math.random() * 3 + 1;
+                    const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    this.particles.push(new Particle(this.x, this.y, color, size, Math.cos(angle) * speed, Math.sin(angle) * speed));
+                }
+            }
+        }
+
+        let fireworks = [];
+
+        function createFirework(x, targetY) {
+            fireworks.push(new Firework(x, targetY));
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            drawHeader();
+            drawCountdown();
+
+            fireworks = fireworks.filter(f => f.exploded ? f.particles.length > 0 : true);
+            fireworks.forEach(f => {
+                f.update();
+                f.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        function randomFirework() {
+            const x = Math.random() * canvas.width;
+            const targetY = Math.random() * canvas.height * 0.5;
+            createFirework(x, targetY);
+        }
+
+        setInterval(randomFirework, 1000);
+
+        canvas.addEventListener('click', e => {
+            createFirework(e.clientX, Math.max(e.clientY * 0.5, 50));
+        });
+
+        animate();
+    </script>
+</body>
+</html>
